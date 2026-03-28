@@ -31,14 +31,14 @@ public class Bug {
 
     @Setter
     @Column(nullable = false)
-    private LocalDateTime creationDate; //
+    private LocalDateTime creationDate;
 
     @Setter
-    private String pictureUrl; //
+    private String pictureUrl;
 
     @Setter
     @Column(nullable = false)
-    private String status; // received, in progress, solved
+    private String status;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)

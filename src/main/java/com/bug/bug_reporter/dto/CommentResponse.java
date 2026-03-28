@@ -1,7 +1,10 @@
 package com.bug.bug_reporter.dto;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 public class CommentResponse {
 
     private Long id;
@@ -11,60 +14,4 @@ public class CommentResponse {
     private Long authorId;
     private String authorUsername;
     private Long bugId;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
-
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Long getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
-    }
-
-    public String getAuthorUsername() {
-        return authorUsername;
-    }
-
-    public void setAuthorUsername(String authorUsername) {
-        this.authorUsername = authorUsername;
-    }
-
-    public Long getBugId() {
-        return bugId;
-    }
-
-    public void setBugId(Long bugId) {
-        this.bugId = bugId;
-    }
 }

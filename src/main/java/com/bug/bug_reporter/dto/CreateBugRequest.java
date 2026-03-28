@@ -1,7 +1,9 @@
 package com.bug.bug_reporter.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 public class CreateBugRequest {
 
     @NotBlank
