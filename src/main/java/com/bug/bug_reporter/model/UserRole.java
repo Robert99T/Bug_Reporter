@@ -1,6 +1,6 @@
 package com.bug.bug_reporter.model;
 
-public enum Role {
+public enum UserRole {
     USER,
     MODERATOR
 }
