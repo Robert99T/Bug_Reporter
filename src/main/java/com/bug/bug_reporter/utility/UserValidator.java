@@ -9,14 +9,17 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserValidator {
-    private final UserRepository userRepository; // Injected by @RequiredArgsConstructor
+    private final UserRepository userRepository;
 
     public void validateRegistration(UserRegistrationDTO dto) throws UserAlreadyExistsException {
         if (userRepository.existsByUsername(dto.username())) {
             throw new UserAlreadyExistsException("Username is already taken");
         }
+
         if (userRepository.existsByEmail(dto.email())) {
             throw new UserAlreadyExistsException("Email is already registered");
         }
+
+
     }
 }
