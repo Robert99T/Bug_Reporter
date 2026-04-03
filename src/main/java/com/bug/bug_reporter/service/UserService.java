@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -39,7 +38,6 @@ public class UserService {
                 .phoneNumber(userRegistration.phoneNumber())
                 .password(encodedPassword)
                 .userRole(UserRole.USER)
-                .registrationDate(LocalDateTime.now())
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -59,8 +57,8 @@ public class UserService {
         return UserResponseDTO.fromEntity(user);
     }
 
-    public UserResponseDTO deleteUser(Integer userId) {
-        User userToDelete = userRepository.findById(Long.valueOf(userId))
+    public UserResponseDTO deleteUser(Long userId) {
+        User userToDelete = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found!"));
         userRepository.delete(userToDelete);
         return UserResponseDTO.fromEntity(userToDelete);

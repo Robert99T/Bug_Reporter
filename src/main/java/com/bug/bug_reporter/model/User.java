@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +31,6 @@ public class User {
     @JsonIgnore
     @Column(nullable = false)
     private String password; // Stored encrypted
-
-    @Column(name = "registration_date")
-    private LocalDateTime registrationDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
