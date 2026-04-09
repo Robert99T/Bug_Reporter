@@ -1,0 +1,71 @@
+/* App.css */
+
+.app {
+    background-color: #1e1e1e;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: sans-serif;
+}
+
+.login-container,
+.bugs-container {
+    max-width: 700px;
+    margin: auto;
+}
+
+input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    background: #2e2e2e;
+    color: #ddd;
+    border: 1px solid #555;
+    border-radius: 4px;
+}
+
+button {
+    padding: 8px 16px;
+    background: #444;
+    color: #ddd;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #555;
+}
+
+.logout {
+    margin-bottom: 20px;
+}
+
+.bug-card {
+    background: #2e2e2e;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #555;
+}
+
+.bug-card h3 {
+    margin: 0 0 8px 0;
+}
+
+/* Markdown content */
+.bug-text {
+    margin-bottom: 8px;
+    font-family: "Courier New", monospace;
+    overflow-x: auto;
+    color: #ddd;
+}
+
+.inline-code {
+    background: #444;
+    color: #f8f8f2;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: "Courier New", monospace;
+}
