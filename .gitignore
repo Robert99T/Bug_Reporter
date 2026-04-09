@@ -20,3 +20,8 @@ out/
 # Mac/Windows hidden OS files
 .DS_Store
 Thumbs.db
+
+# Local database
+.env
+src/main/resources/application-local.properties
+src/main/resources/data-local.sql
