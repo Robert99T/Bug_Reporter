@@ -52,8 +52,9 @@ public class AuthController {
         // Extract the role from Authorities
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
+                .map(r -> r.replace("ROLE_", "")) // Strips the prefix for the response
                 .findFirst()
-                .orElse("ROLE_USER"); // Fallback, though CustomUserDetails guarantees a role
+                .orElse("USER"); // Fallback, though CustomUserDetails guarantees a role
 
         return ResponseEntity.ok(new LoginResponse(id, username, role));
     }
