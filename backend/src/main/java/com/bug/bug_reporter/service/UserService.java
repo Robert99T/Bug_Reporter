@@ -114,4 +114,14 @@ public class UserService {
         }
     }
 
+    /**
+     * TODO: Implement the specific author score calculation logic here. (Bonus feature 1)
+     * * @param authorId The ID of the author to calculate the score for.
+     * @return The calculated author score.
+     */
+    public double calculateUserScore(Long authorId) {
+        // Placeholder value until the specific calculation algorithm is implemented
+        return 0.0;
+    }
+
 }

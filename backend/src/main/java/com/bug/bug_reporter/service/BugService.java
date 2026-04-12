@@ -31,6 +31,7 @@
         private final TagRepository tagRepository;
         private final com.bug.bug_reporter.repository.BugVoteRepository bugVoteRepository;
         private final com.bug.bug_reporter.repository.CommentVoteRepository commentVoteRepository;
+        private final UserService userService;
 
 
         public BugResponse createBug(CreateBugRequest request) {
@@ -119,10 +120,7 @@
             if (bug.getAuthor() != null) {
                 response.setAuthorId(bug.getAuthor().getId());
                 response.setAuthorUsername(bug.getAuthor().getUsername());
-                Integer bugScore = bugVoteRepository.getAuthorVoteScore(bug.getAuthor().getId());
-                Integer commentScore = commentVoteRepository.getAuthorVoteScore(bug.getAuthor().getId());
-                double authorScore = (double) ((bugScore != null ? bugScore : 0) + (commentScore != null ? commentScore : 0));
-                response.setAuthorScore(authorScore);
+                response.setAuthorScore(userService.calculateUserScore(bug.getAuthor().getId()));
             }
 
             Integer voteScore = bugVoteRepository.getVoteScoreByBugId(bug.getId());

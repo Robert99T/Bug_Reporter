@@ -22,17 +22,20 @@ public class CommentService {
     private final UserRepository userRepository;
     private final com.bug.bug_reporter.repository.BugVoteRepository bugVoteRepository;
     private final com.bug.bug_reporter.repository.CommentVoteRepository commentVoteRepository;
+    private final UserService userService;
 
     public CommentService(CommentRepository commentRepository,
                           BugRepository bugRepository,
                           UserRepository userRepository,
                           com.bug.bug_reporter.repository.BugVoteRepository bugVoteRepository,
-                          com.bug.bug_reporter.repository.CommentVoteRepository commentVoteRepository) {
+                          com.bug.bug_reporter.repository.CommentVoteRepository commentVoteRepository,
+                          UserService userService) { // <-- Add userService here
         this.commentRepository = commentRepository;
         this.bugRepository = bugRepository;
         this.userRepository = userRepository;
         this.bugVoteRepository = bugVoteRepository;
         this.commentVoteRepository = commentVoteRepository;
+        this.userService = userService; // <-- Add userService here
     }
 
     public CommentResponse createComment(Long bugId, CreateCommentRequest request) {
@@ -101,10 +104,7 @@ public class CommentService {
         if (comment.getAuthor() != null) {
             response.setAuthorId(comment.getAuthor().getId());
             response.setAuthorUsername(comment.getAuthor().getUsername());
-            Integer bugScore = bugVoteRepository.getAuthorVoteScore(comment.getAuthor().getId());
-            Integer commentScore = commentVoteRepository.getAuthorVoteScore(comment.getAuthor().getId());
-            double authorScore = (double) ((bugScore != null ? bugScore : 0) + (commentScore != null ? commentScore : 0));
-            response.setAuthorScore(authorScore);
+            response.setAuthorScore(userService.calculateUserScore(comment.getAuthor().getId()));
         }
 
         if (comment.getBug() != null) {
