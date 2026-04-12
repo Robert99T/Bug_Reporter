@@ -8,6 +8,8 @@ import com.bug.bug_reporter.model.User;
 import com.bug.bug_reporter.model.UserRole;
 import com.bug.bug_reporter.repository.BugRepository;
 import com.bug.bug_reporter.repository.UserRepository;
+import com.bug.bug_reporter.repository.BugVoteRepository;
+import com.bug.bug_reporter.repository.CommentVoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +33,12 @@ class BugServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private BugVoteRepository bugVoteRepository;
+
+    @Mock
+    private CommentVoteRepository commentVoteRepository;
 
     @InjectMocks
     private BugService bugService;
@@ -137,7 +145,7 @@ class BugServiceTest {
     void getBugById_existingId_shouldReturnBugResponse() {
         when(bugRepository.findById(1L)).thenReturn(Optional.of(testBug));
 
-        BugResponse result = bugService.getBugById(1L);
+        BugResponse result = bugService.getBugById(1L, null);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
@@ -148,7 +156,7 @@ class BugServiceTest {
     void getBugById_nonExistingId_shouldThrowException() {
         when(bugRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> bugService.getBugById(99L));
+        assertThrows(RuntimeException.class, () -> bugService.getBugById(99L, null));
     }
 
     // ==================== updateBug ====================

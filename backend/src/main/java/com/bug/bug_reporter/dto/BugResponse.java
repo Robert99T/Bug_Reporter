@@ -18,6 +18,9 @@ public class BugResponse {
     private String status;
     private Long authorId;
     private String authorUsername;
+    private Double authorScore;
+    private Integer voteScore;
+    private String userVote;
     private List<CommentResponse> comments;
     private Set<String> tags;
 }

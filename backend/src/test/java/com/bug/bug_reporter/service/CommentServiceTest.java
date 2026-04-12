@@ -10,6 +10,8 @@ import com.bug.bug_reporter.model.UserRole;
 import com.bug.bug_reporter.repository.BugRepository;
 import com.bug.bug_reporter.repository.CommentRepository;
 import com.bug.bug_reporter.repository.UserRepository;
+import com.bug.bug_reporter.repository.BugVoteRepository;
+import com.bug.bug_reporter.repository.CommentVoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +38,12 @@ class CommentServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private BugVoteRepository bugVoteRepository;
+
+    @Mock
+    private CommentVoteRepository commentVoteRepository;
 
     @InjectMocks
     private CommentService commentService;
@@ -142,7 +150,7 @@ class CommentServiceTest {
 
         when(commentRepository.findByBugId(1L)).thenReturn(List.of(testComment, secondComment));
 
-        List<CommentResponse> result = commentService.getCommentsByBugId(1L);
+        List<CommentResponse> result = commentService.getCommentsByBugId(1L, null);
 
         assertEquals(2, result.size());
         assertEquals("I can reproduce this issue", result.get(0).getText());
@@ -153,7 +161,7 @@ class CommentServiceTest {
     void getCommentsByBugId_noComments_shouldReturnEmptyList() {
         when(commentRepository.findByBugId(1L)).thenReturn(List.of());
 
-        List<CommentResponse> result = commentService.getCommentsByBugId(1L);
+        List<CommentResponse> result = commentService.getCommentsByBugId(1L, null);
 
         assertTrue(result.isEmpty());
     }

@@ -29,6 +29,8 @@
         private final BugRepository bugRepository;
         private final UserRepository userRepository;
         private final TagRepository tagRepository;
+        private final com.bug.bug_reporter.repository.BugVoteRepository bugVoteRepository;
+        private final com.bug.bug_reporter.repository.CommentVoteRepository commentVoteRepository;
 
 
         public BugResponse createBug(CreateBugRequest request) {
@@ -52,21 +54,21 @@
 
             Bug savedBug = bugRepository.save(bug);
 
-            return mapToBugResponse(savedBug);
+            return mapToBugResponse(savedBug, null);
         }
 
         public List<BugResponse> getAllBugs() {
             return bugRepository.findAll()
                     .stream()
-                    .map(this::mapToBugResponse)
+                    .map(bug -> mapToBugResponse(bug, null))
                     .toList();
         }
 
-        public BugResponse getBugById(Long id) {
+        public BugResponse getBugById(Long id, Long userId) {
             Bug bug = bugRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Bug not found with id: " + id));
 
-            return mapToBugResponse(bug);
+            return mapToBugResponse(bug, userId);
         }
 
         public BugResponse updateBug(Long id, UpdateBugRequest request) {
@@ -90,7 +92,7 @@
             }
 
             Bug updatedBug = bugRepository.save(bug);
-            return mapToBugResponse(updatedBug);
+            return mapToBugResponse(updatedBug, null);
         }
 
         public void deleteBug(Long id) {
@@ -100,7 +102,7 @@
             bugRepository.delete(bug);
         }
 
-        private BugResponse mapToBugResponse(Bug bug) {
+        private BugResponse mapToBugResponse(Bug bug, Long userId) {
             BugResponse response = new BugResponse();
             response.setId(bug.getId());
             response.setTitle(bug.getTitle());
@@ -117,12 +119,24 @@
             if (bug.getAuthor() != null) {
                 response.setAuthorId(bug.getAuthor().getId());
                 response.setAuthorUsername(bug.getAuthor().getUsername());
+                Integer bugScore = bugVoteRepository.getAuthorVoteScore(bug.getAuthor().getId());
+                Integer commentScore = commentVoteRepository.getAuthorVoteScore(bug.getAuthor().getId());
+                double authorScore = (double) ((bugScore != null ? bugScore : 0) + (commentScore != null ? commentScore : 0));
+                response.setAuthorScore(authorScore);
+            }
+
+            Integer voteScore = bugVoteRepository.getVoteScoreByBugId(bug.getId());
+            response.setVoteScore(voteScore != null ? voteScore : 0);
+
+            if (userId != null) {
+                bugVoteRepository.findByUserIdAndBugId(userId, bug.getId())
+                        .ifPresent(vote -> response.setUserVote(vote.getVoteType() == 1 ? "UPVOTE" : "DOWNVOTE"));
             }
 
             if (bug.getComments() != null) {
                 List<CommentResponse> comments = bug.getComments()
                         .stream()
-                        .map(this::mapToCommentResponse)
+                        .map(c -> mapToCommentResponse(c, userId))
                         .toList();
                 response.setComments(comments);
             }
@@ -130,7 +144,7 @@
             return response;
         }
 
-        private CommentResponse mapToCommentResponse(Comment comment) {
+        private CommentResponse mapToCommentResponse(Comment comment, Long userId) {
             CommentResponse response = new CommentResponse();
             response.setId(comment.getId());
             response.setText(comment.getText());
@@ -140,10 +154,22 @@
             if (comment.getAuthor() != null) {
                 response.setAuthorId(comment.getAuthor().getId());
                 response.setAuthorUsername(comment.getAuthor().getUsername());
+                Integer bugScore = bugVoteRepository.getAuthorVoteScore(comment.getAuthor().getId());
+                Integer commentScore = commentVoteRepository.getAuthorVoteScore(comment.getAuthor().getId());
+                double authorScore = (double) ((bugScore != null ? bugScore : 0) + (commentScore != null ? commentScore : 0));
+                response.setAuthorScore(authorScore);
             }
 
             if (comment.getBug() != null) {
                 response.setBugId(comment.getBug().getId());
+            }
+
+            Integer voteScore = commentVoteRepository.getVoteScoreByCommentId(comment.getId());
+            response.setVoteScore(voteScore != null ? voteScore : 0);
+
+            if (userId != null) {
+                commentVoteRepository.findByUserIdAndCommentId(userId, comment.getId())
+                        .ifPresent(vote -> response.setUserVote(vote.getVoteType() == 1 ? "UPVOTE" : "DOWNVOTE"));
             }
 
             return response;
