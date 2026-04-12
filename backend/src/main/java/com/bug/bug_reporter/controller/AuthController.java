@@ -1,6 +1,8 @@
 package com.bug.bug_reporter.controller;
+
 import com.bug.bug_reporter.dto.LoginRequest;
 import com.bug.bug_reporter.dto.LoginResponse;
+import com.bug.bug_reporter.security.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,11 +25,10 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
 
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest loginRequest,
-            HttpServletRequest request // <- needed
+            HttpServletRequest request
     ) {
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
@@ -40,6 +42,19 @@ public class AuthController {
                 SecurityContextHolder.getContext()
         );
 
-        return ResponseEntity.ok(new LoginResponse(auth.getName()));
+        // Cast to CustomUserDetails
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        // Extract the required fields
+        Long id = userDetails.getId();
+        String username = userDetails.getUsername();
+
+        // Extract the role from Authorities
+        String role = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("ROLE_USER"); // Fallback, though CustomUserDetails guarantees a role
+
+        return ResponseEntity.ok(new LoginResponse(id, username, role));
     }
 }
