@@ -3,17 +3,14 @@ package com.bug.bug_reporter.service;
 import com.bug.bug_reporter.dto.UserRegistrationDTO;
 import com.bug.bug_reporter.dto.UserRequestDTO;
 import com.bug.bug_reporter.dto.UserResponseDTO;
+import com.bug.bug_reporter.dto.UserScoreResponse;
 import com.bug.bug_reporter.model.User;
 import com.bug.bug_reporter.model.UserRole;
 import com.bug.bug_reporter.repository.UserRepository;
-import com.bug.bug_reporter.security.CustomUserDetails;
-import com.bug.bug_reporter.security.CustomUserDetailsService;
 import com.bug.bug_reporter.utility.*;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,6 +52,14 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " not found!"));
         return UserResponseDTO.fromEntity(user);
+    }
+
+    public UserScoreResponse getUserScore(Long userId) {
+        // TODO: Implement logic to calculate and return user's score
+        // 1. Check if user exists. If not, throw UserNotFoundException (handled as 404 Not Found)
+        // 2. Calculate the score
+        // 3. Construct and return UserScoreResponse
+        return new UserScoreResponse(userId, 0.0);
     }
 
     public UserResponseDTO deleteUser(Long userId) {

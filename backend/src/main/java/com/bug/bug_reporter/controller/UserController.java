@@ -3,6 +3,7 @@ package com.bug.bug_reporter.controller;
 import com.bug.bug_reporter.dto.UserRegistrationDTO;
 import com.bug.bug_reporter.dto.UserRequestDTO;
 import com.bug.bug_reporter.dto.UserResponseDTO;
+import com.bug.bug_reporter.dto.UserScoreResponse;
 import com.bug.bug_reporter.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,13 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         UserResponseDTO user = userService.getUserById(id);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/{id}/score")
+    public ResponseEntity<UserScoreResponse> getUserScore(@PathVariable Long id) {
+        // TODO: Add any controller-level logic if necessary
+        UserScoreResponse response = userService.getUserScore(id);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
