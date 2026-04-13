@@ -40,7 +40,6 @@ public class UserController {
 
     @GetMapping("/{id}/score")
     public ResponseEntity<UserScoreResponse> getUserScore(@PathVariable Long id) {
-        // TODO: Add any controller-level logic if necessary
         UserScoreResponse response = userService.getUserScore(id);
         return ResponseEntity.ok(response);
     }
