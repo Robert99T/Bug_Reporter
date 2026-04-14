@@ -5,11 +5,13 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Login from "./Login";
-import BugList from "./BugList";
+import LoginPage from "./pages/LoginPage";
+import BugListPage from "./pages/BugListPage";
 import BugDetailsPage from "./pages/BugDetailsPage";
 import type { CurrentUser } from "./types";
 
+// ─── User Context ────────────────────────────────────────────────────
+// Provides the logged-in user's info to all child components.
 export const UserContext = createContext<CurrentUser | null>(null);
 
 const App: React.FC = () => {
@@ -32,22 +34,27 @@ const App: React.FC = () => {
     <UserContext.Provider value={currentUser}>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+<Route
+            path="/login"
+            element={<LoginPage onLogin={handleLogin} />}
+          />
 
           <Route
             path="/"
             element={
-              isAuthenticated ? <BugList /> : <Navigate to="/login" replace />
+              isAuthenticated ? <BugListPage /> : <Navigate to="/login" replace />
             }
           />
 
+          {/* Bug list (explicit) */}
           <Route
             path="/bugs"
             element={
-              isAuthenticated ? <BugList /> : <Navigate to="/login" replace />
+              isAuthenticated ? <BugListPage /> : <Navigate to="/login" replace />
             }
           />
 
+          {/* Bug details page */}
           <Route
             path="/bugs/:id"
             element={

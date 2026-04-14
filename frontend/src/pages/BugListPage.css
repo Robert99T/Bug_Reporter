@@ -1,0 +1,14 @@
+.bug-list-container {
+    max-width: 800px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bug-list-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #f9fafb;
+}

@@ -1,33 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./BugList.css";
 import CreateBugForm from "./components/CreateBugForm";
-import { getAllBugs, type BugResponse } from "./api/bugApi";
-import type { CurrentUser } from "./types";
+import { getAllBugs } from "./api/bugApi";
+import type { BugResponse, CurrentUser } from "./types";
 
-interface Comment {
-  id: number;
-  text: string;
-  pictureUrl?: string | null;
-  creationDate: string;
-  authorId: number;
-  authorUsername: string;
-  bugId: number;
-}
-
-interface Bug {
-  id: number;
-  title: string;
-  text: string;
-  creationDate: string;
-  pictureUrl?: string | null;
-  status: "OPEN" | "IN_PROGRESS" | "SOLVED";
-  authorId: number;
-  authorUsername: string;
-  comments?: Comment[];
-  tags?: string[];
-}
 const BugList: React.FC = () => {
   const [bugs, setBugs] = useState<BugResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,6 +101,16 @@ const BugList: React.FC = () => {
                 alt="Bug screenshot"
                 className="bug-picture"
               />
+            )}
+
+            {bug.tags && bug.tags.length > 0 && (
+              <div className="bug-tags">
+                {bug.tags.map((tag, index) => (
+                  <span key={index} className="bug-tag">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             )}
 
             <p className="bug-comments">
