@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import type { CurrentUser } from "./types";
+import type { CurrentUser } from "../types";
 
-interface LoginProps {
+interface LoginPageProps {
   onLogin: (user: CurrentUser) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +20,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      // The backend returns { id, username, role } alongside the session cookie.
       const res = await axios.post<CurrentUser>(
         "http://localhost:8080/auth/login",
         { username, password },
@@ -38,29 +37,31 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
+    <div className="login-container">
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
+      <form onSubmit={handleSubmit} className="login-form">
+        <div className="form-group">
+          <label htmlFor="username">Username:</label>
           <input
+            id="username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
-        <div style={{ marginTop: "10px" }}>
-          <label>Password:</label>
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" style={{ marginTop: "10px" }} disabled={loading}>
+        {error && <p className="error-message">{error}</p>}
+        <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
@@ -68,4 +69,4 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   );
 };
 
-export default Login;
+export default LoginPage;

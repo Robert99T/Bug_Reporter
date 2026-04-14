@@ -58,10 +58,36 @@
             return mapToBugResponse(savedBug, null);
         }
 
-        public List<BugResponse> getAllBugs() {
+        public List<BugResponse> getAllBugs(Long userId, String search, String tag, Long authorId) {
             return bugRepository.findAll()
                     .stream()
-                    .map(bug -> mapToBugResponse(bug, null))
+                    .filter(bug -> {
+                        if (search != null && !search.isBlank()) {
+                            String searchLower = search.toLowerCase();
+                            if (!bug.getTitle().toLowerCase().contains(searchLower)) {
+                                return false;
+                            }
+                        }
+                        if (tag != null && !tag.isBlank()) {
+                            if (bug.getTags() == null || bug.getTags().stream().noneMatch(t -> t.getName().equalsIgnoreCase(tag))) {
+                                return false;
+                            }
+                        }
+                        if (authorId != null) {
+                            if (bug.getAuthor() == null || !bug.getAuthor().getId().equals(authorId)) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    })
+                    .map(bug -> mapToBugResponse(bug, userId))
+                    .toList();
+        }
+
+        public List<String> getAllTags() {
+            return tagRepository.findAll()
+                    .stream()
+                    .map(Tag::getName)
                     .toList();
         }
 

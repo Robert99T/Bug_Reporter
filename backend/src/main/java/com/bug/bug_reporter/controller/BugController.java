@@ -24,8 +24,12 @@ public class BugController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BugResponse>> getAllBugs() {
-        List<BugResponse> response = bugService.getAllBugs();
+    public ResponseEntity<List<BugResponse>> getAllBugs(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) Long authorId) {
+        List<BugResponse> response = bugService.getAllBugs(userId, search, tag, authorId);
         return ResponseEntity.ok(response);
     }
 
