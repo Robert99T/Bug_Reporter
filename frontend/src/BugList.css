@@ -156,3 +156,20 @@ body {
     border-left: 4px solid #2563eb;
     padding-left: 12px;
 }
+
+/* Clickable card */
+.bug-card-clickable {
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bug-card-clickable:hover {
+    transform: translateY(-2px);
+    border-color: #3b82f6;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+}
+
+.bug-card-clickable:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}

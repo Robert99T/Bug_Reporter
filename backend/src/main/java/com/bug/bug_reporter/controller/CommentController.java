@@ -26,8 +26,10 @@ public class CommentController {
     }
 
     @GetMapping("/bugs/{bugId}/comments")
-    public ResponseEntity<List<CommentResponse>> getCommentsByBugId(@PathVariable Long bugId) {
-        List<CommentResponse> comments = commentService.getCommentsByBugId(bugId);
+    public ResponseEntity<List<CommentResponse>> getCommentsByBugId(
+            @PathVariable Long bugId,
+            @RequestParam(required = false) Long userId) {
+        List<CommentResponse> comments = commentService.getCommentsByBugId(bugId, userId);
         return ResponseEntity.ok(comments);
     }
 

@@ -31,5 +31,5 @@ public class BugVote {
 
     @Setter
     @Column(nullable = false)
-    private int voteType; // 1 for Upvote/Like, -1 for Downvote/Dislike [cite: 25, 80]
+    private int voteType; // 1 for Upvote/Like, -1 for Downvote/Dislike
 }

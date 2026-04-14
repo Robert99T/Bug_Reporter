@@ -2,7 +2,6 @@ package com.bug.bug_reporter.controller;
 
 import com.bug.bug_reporter.dto.*;
 import com.bug.bug_reporter.service.BugService;
-import com.bug.bug_reporter.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,8 +30,10 @@ public class BugController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BugResponse> getBugById(@PathVariable Long id) {
-        BugResponse bug = bugService.getBugById(id);
+    public ResponseEntity<BugResponse> getBugById(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId) {
+        BugResponse bug = bugService.getBugById(id, userId);
         return ResponseEntity.ok(bug);
     }
 

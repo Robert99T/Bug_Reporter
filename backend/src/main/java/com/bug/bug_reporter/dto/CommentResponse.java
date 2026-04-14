@@ -13,5 +13,8 @@ public class CommentResponse {
     private LocalDateTime creationDate;
     private Long authorId;
     private String authorUsername;
+    private Double authorScore;
+    private Integer voteScore;
+    private String userVote;
     private Long bugId;
 }

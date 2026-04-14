@@ -1,38 +1,69 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import React, { createContext, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Login from "./Login";
-import BugForm from "./BugList.tsx";
+import BugList from "./BugList";
+import BugDetailsPage from "./pages/BugDetailsPage";
+import type { CurrentUser } from "./types";
+
+// ─── User Context ────────────────────────────────────────────────────
+// Provides the logged-in user's info to all child components.
+export const UserContext = createContext<CurrentUser | null>(null);
 
 const App: React.FC = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
-    return (
-        <Router>
-            <Routes>
-                {/* Login page */}
-                <Route
-                    path="/login"
-                    element={<Login onLogin={() => setIsAuthenticated(true)} />}
-                />
+  const isAuthenticated = currentUser !== null;
 
-                {/* Home page now shows all bugs */}
-                <Route
-                    path="/"
-                    element={
-                        isAuthenticated ? <BugForm /> : <Navigate to="/login" replace />
-                    }
-                />
+  const handleLogin = (user: CurrentUser) => {
+    setCurrentUser(user);
+  };
 
-                {/* Optional: explicit /bugs route */}
-                <Route
-                    path="/bugs"
-                    element={
-                        isAuthenticated ? <BugForm /> : <Navigate to="/login" replace />
-                    }
-                />
-            </Routes>
-        </Router>
-    );
+  return (
+    <UserContext.Provider value={currentUser}>
+      <Router>
+        <Routes>
+          {/* Login page */}
+          <Route
+            path="/login"
+            element={<Login onLogin={handleLogin} />}
+          />
+
+          {/* Home — bug list */}
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? <BugList /> : <Navigate to="/login" replace />
+            }
+          />
+
+          {/* Bug list (explicit) */}
+          <Route
+            path="/bugs"
+            element={
+              isAuthenticated ? <BugList /> : <Navigate to="/login" replace />
+            }
+          />
+
+          {/* Bug details page */}
+          <Route
+            path="/bugs/:id"
+            element={
+              isAuthenticated ? (
+                <BugDetailsPage />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+        </Routes>
+      </Router>
+    </UserContext.Provider>
+  );
 };
 
 export default App;
