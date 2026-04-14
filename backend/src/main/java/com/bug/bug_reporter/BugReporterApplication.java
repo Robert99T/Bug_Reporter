@@ -12,7 +12,6 @@ public class BugReporterApplication {
 		SpringApplication.run(BugReporterApplication.class, args);
 
 		CommentResponse commentResponse = new CommentResponse();
-		commentResponse.getBugId();
 
 	}
 
