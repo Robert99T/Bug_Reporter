@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./BugList.css";
+import CreateBugForm from "./components/CreateBugForm";
+import { getAllBugs, type BugResponse } from "./api/bugApi";
+import type { CurrentUser } from "./types";
 
 interface Comment {
   id: number;
@@ -25,23 +28,25 @@ interface Bug {
   comments?: Comment[];
   tags?: string[];
 }
-
 const BugList: React.FC = () => {
-  const [bugs, setBugs] = useState<Bug[]>([]);
+  const [bugs, setBugs] = useState<BugResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const savedUser = localStorage.getItem("currentUser");
+  const currentUser: CurrentUser | null = savedUser
+    ? JSON.parse(savedUser)
+    : null;
+
   useEffect(() => {
     const fetchBugs = async () => {
       try {
-        const res = await axios.get<Bug[]>("http://localhost:8080/bugs", {
-          withCredentials: true,
-        });
+        const res = await getAllBugs();
         setBugs(res.data);
       } catch (err) {
         console.error(err);
-        setError("Failed to fetch bugs");
+        setError("Nu s-au putut încărca bug-urile.");
       } finally {
         setLoading(false);
       }
@@ -70,6 +75,13 @@ const BugList: React.FC = () => {
     <div className="bug-list-container">
       <h2 className="bug-list-title">Bug Reports</h2>
 
+      {currentUser && (
+        <CreateBugForm
+          authorId={currentUser.id}
+          onBugCreated={(newBug) => setBugs((prev) => [newBug, ...prev])}
+        />
+      )}
+
       {bugs.length === 0 ? (
         <p style={{ textAlign: "center" }}>No bugs found.</p>
       ) : (
@@ -81,12 +93,13 @@ const BugList: React.FC = () => {
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate(`/bugs/${bug.id}`);
+              if (e.key === "Enter" || e.key === " ") {
+                navigate(`/bugs/${bug.id}`);
+              }
             }}
           >
             <h3 className="bug-title">{bug.title}</h3>
 
-            {/* HEADER */}
             <div className="bug-header">
               <div className="bug-user">
                 By <strong>{bug.authorUsername || "Unknown"}</strong>
@@ -105,7 +118,6 @@ const BugList: React.FC = () => {
 
             <p className="bug-text">{bug.text}</p>
 
-            {/* IMAGE */}
             {bug.pictureUrl && (
               <img
                 src={bug.pictureUrl}
@@ -114,18 +126,6 @@ const BugList: React.FC = () => {
               />
             )}
 
-            {/* TAGS */}
-            {bug.tags && bug.tags.length > 0 && (
-              <div className="bug-tags">
-                {bug.tags.map((tag, index) => (
-                  <span key={index} className="bug-tag">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* COMMENTS */}
             <p className="bug-comments">
               {bug.comments?.length || 0} comment
               {(bug.comments?.length || 0) !== 1 ? "s" : ""}

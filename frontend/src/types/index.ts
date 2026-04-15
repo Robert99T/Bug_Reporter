@@ -93,3 +93,23 @@ export interface UpdateBugRequest {
   status?: BugStatus;
   tags?: string[];
 }
+
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+  phoneNumber?: string;
+}
+
+export interface CreateBugRequest {
+  title: string;
+  text: string;
+  pictureUrl?: string;
+  status: "OPEN" | "IN_PROGRESS" | "SOLVED";
+  authorId: number;
+  tags: string[];
+}
+export interface CurrentUser {
+  id: number;
+  username: string;
+}
