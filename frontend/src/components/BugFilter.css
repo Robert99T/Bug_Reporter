@@ -1,0 +1,126 @@
+.bug-filter {
+    background-color: #111827;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-icon {
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+.filter-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    background-color: #1f2937;
+    color: #f9fafb;
+    font-size: 0.9rem;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.filter-input::placeholder {
+    color: #6b7280;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    background-color: #1f2937;
+    color: #f9fafb;
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    background-color: #1f2937;
+    color: #9ca3af;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-toggle:hover {
+    border-color: #4b5563;
+    color: #d1d5db;
+}
+
+.filter-toggle.active {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+.filter-clear {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: transparent;
+    color: #ef4444;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.filter-clear:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.filter-apply {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #3b82f6;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.filter-apply:hover {
+    background-color: #2563eb;
+}

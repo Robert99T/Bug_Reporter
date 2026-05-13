@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import type { CurrentUser } from "./types";
-import "./Login.css";
+import type { CurrentUser } from "../types";
+import "../Login.css";
 
-interface LoginProps {
+interface LoginPageProps {
   onLogin: (user: CurrentUser) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -179,4 +179,4 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   );
 };
 
-export default Login;
+export default LoginPage;

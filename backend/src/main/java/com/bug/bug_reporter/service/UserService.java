@@ -48,6 +48,10 @@ public class UserService {
                 .toList();
     }
 
+    public List<UserResponseDTO> getAllUsers() {
+        return getUsers();
+    }
+
     public UserResponseDTO getUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " not found!"));

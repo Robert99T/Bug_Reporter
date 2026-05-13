@@ -1,0 +1,124 @@
+.login-page {
+  min-height: 100vh;
+  background: #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #111827;
+  border: 1px solid #374151;
+  border-left: 4px solid #2563eb;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.login-heading {
+  margin: 0 0 20px;
+  text-align: center;
+  color: #f9fafb;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.login-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.login-toggle-button {
+  flex: 1;
+  border: 1px solid #374151;
+  background: #1f2937;
+  color: #d1d5db;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.login-toggle-button.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-label {
+  color: #e5e7eb;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.login-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+.login-error {
+  color: #fca5a5;
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.login-success {
+  color: #86efac;
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.login-submit {
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.login-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
+}
+
+.login-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
