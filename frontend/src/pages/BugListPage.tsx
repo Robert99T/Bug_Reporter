@@ -2,7 +2,9 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import BugCard, { type Bug } from "../components/BugCard";
 import BugFilter from "../components/BugFilter";
+import CreateBugForm from "../components/CreateBugForm";
 import { UserContext } from "../App";
+import type { BugResponse } from "../api/bugApi";
 import "./BugListPage.css";
 
 interface FilterParams {
@@ -64,6 +66,15 @@ const BugListPage: React.FC = () => {
       
       <div className="bug-list-container">
         <h2 className="bug-list-title">Bug Reports</h2>
+
+        {currentUser && (
+          <CreateBugForm
+            authorId={currentUser.id}
+            onBugCreated={(newBug) =>
+              setBugs((prev) => [newBug as unknown as Bug, ...prev])
+            }
+          />
+        )}
 
         {initialLoading ? (
           <p>Loading bugs...</p>
