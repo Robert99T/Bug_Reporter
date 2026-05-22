@@ -32,7 +32,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/users/register").permitAll()
+                        // Add your API and Bug routes here
+                        .requestMatchers("/auth/**", "/users/register", "/api/**", "/bugs/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
