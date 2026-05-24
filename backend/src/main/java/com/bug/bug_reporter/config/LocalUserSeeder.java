@@ -52,6 +52,22 @@ public class LocalUserSeeder {
             } else {
                 log.debug("User 'user2' already exists. Skipping.");
             }
+
+            if (userRepository.findByUsername("moderator").isEmpty()) {
+                User mod = User.builder()
+                        .username("moderator")
+                        .email("mod@local.dev")
+                        .password(passwordEncoder.encode("moderator"))
+                        .userRole(UserRole.MODERATOR)
+                        .isBanned(false)
+                        .score(0.0)
+                        .build();
+
+                userRepository.save(mod);
+                log.info("User 'moderator' created successfully.");
+            } else {
+                log.debug("User 'moderator' already exists. Skipping.");
+            }
         };
     }
 }

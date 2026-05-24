@@ -6,8 +6,10 @@ import com.bug.bug_reporter.security.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -26,36 +30,44 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
+    public ResponseEntity<?> login(
             @Valid @RequestBody LoginRequest loginRequest,
             HttpServletRequest request
     ) {
-        UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
+        try {
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
 
-        Authentication auth = authenticationManager.authenticate(authToken);
+            Authentication auth = authenticationManager.authenticate(authToken);
 
-        SecurityContextHolder.getContext().setAuthentication(auth);
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-        request.getSession(true).setAttribute(
-                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                SecurityContextHolder.getContext()
-        );
+            request.getSession(true).setAttribute(
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    SecurityContextHolder.getContext()
+            );
 
-        // Cast to CustomUserDetails
-        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+            // Cast to CustomUserDetails
+            CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
 
-        // Extract the required fields
-        Long id = userDetails.getId();
-        String username = userDetails.getUsername();
+            // Extract the required fields
+            Long id = userDetails.getId();
+            String username = userDetails.getUsername();
 
-        // Extract the role from Authorities
-        String role = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(r -> r.replace("ROLE_", "")) // Strips the prefix for the response
-                .findFirst()
-                .orElse("USER"); // Fallback, though CustomUserDetails guarantees a role
+            // Extract the role from Authorities
+            String role = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .map(r -> r.replace("ROLE_", "")) // Strips the prefix for the response
+                    .findFirst()
+                    .orElse("USER"); // Fallback, though CustomUserDetails guarantees a role
 
-        return ResponseEntity.ok(new LoginResponse(id, username, role));
+            return ResponseEntity.ok(new LoginResponse(id, username, role));
+
+        } catch (LockedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "error", "ACCOUNT_BANNED",
+                    "message", "Your account has been banned. Please contact an administrator."
+            ));
+        }
     }
-}
+}

@@ -9,6 +9,8 @@ import com.bug.bug_reporter.model.User;
 import com.bug.bug_reporter.repository.BugRepository;
 import com.bug.bug_reporter.repository.CommentRepository;
 import com.bug.bug_reporter.repository.UserRepository;
+import com.bug.bug_reporter.utility.SecurityUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -75,6 +77,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
 
+        if (!SecurityUtils.hasPermissionOrIsModerator(comment.getAuthor().getId())) {
+            throw new AccessDeniedException("Only the author or a moderator can edit this comment.");
+        }
+
         if (request.getText() != null && !request.getText().isBlank()) {
             comment.setText(request.getText());
         }
@@ -90,6 +96,10 @@ public class CommentService {
     public void deleteComment(Long id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
+
+        if (!SecurityUtils.hasPermissionOrIsModerator(comment.getAuthor().getId())) {
+            throw new AccessDeniedException("Only the author or a moderator can delete this comment.");
+        }
 
         commentRepository.delete(comment);
     }

@@ -15,6 +15,7 @@ public class CustomUserDetails implements UserDetails {
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
+    private final boolean banned;
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
@@ -23,5 +24,11 @@ public class CustomUserDetails implements UserDetails {
         this.authorities = Collections.singletonList(
             new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name())
         );
+        this.banned = user.isBanned();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !banned;
     }
 }

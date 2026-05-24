@@ -123,7 +123,7 @@ class BugServiceTest {
 
         when(bugRepository.findAll()).thenReturn(List.of(testBug, secondBug));
 
-        List<BugResponse> result = bugService.getAllBugs();
+        List<BugResponse> result = bugService.getAllBugs(null, null, null, null);
 
         assertEquals(2, result.size());
         assertEquals("Login button broken", result.get(0).getTitle());
@@ -134,7 +134,7 @@ class BugServiceTest {
     void getAllBugs_emptyList_shouldReturnEmptyList() {
         when(bugRepository.findAll()).thenReturn(List.of());
 
-        List<BugResponse> result = bugService.getAllBugs();
+        List<BugResponse> result = bugService.getAllBugs(null, null, null, null);
 
         assertTrue(result.isEmpty());
     }
