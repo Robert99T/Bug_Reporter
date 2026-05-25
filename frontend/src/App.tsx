@@ -1,73 +1,70 @@
-import React, { createContext, useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ModeratorRoute from "./components/ModeratorRoute";
 import LoginPage from "./pages/LoginPage";
 import BugListPage from "./pages/BugListPage";
 import BugDetailsPage from "./pages/BugDetailsPage";
-import type { CurrentUser } from "./types";
-
-// ─── User Context ────────────────────────────────────────────────────
-// Provides the logged-in user's info to all child components.
-export const UserContext = createContext<CurrentUser | null>(null);
+import UserProfilePage from "./pages/UserProfilePage";
+import ModerationPage from "./pages/ModerationPage";
 
 const App: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem("currentUser");
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-    }
-  }, []);
-
-  const isAuthenticated = currentUser !== null;
-
-  const handleLogin = (user: CurrentUser) => {
-    setCurrentUser(user);
-  };
-
   return (
-    <UserContext.Provider value={currentUser}>
-      <Router>
+    <Router>
+      <AuthProvider>
+        <Navbar />
         <Routes>
-<Route
-            path="/login"
-            element={<LoginPage onLogin={handleLogin} />}
-          />
+          {/* Public */}
+          <Route path="/login" element={<LoginPage />} />
 
+          {/* Authenticated */}
           <Route
             path="/"
             element={
-              isAuthenticated ? <BugListPage /> : <Navigate to="/login" replace />
+              <ProtectedRoute>
+                <BugListPage />
+              </ProtectedRoute>
             }
           />
-
-          {/* Bug list (explicit) */}
           <Route
             path="/bugs"
             element={
-              isAuthenticated ? <BugListPage /> : <Navigate to="/login" replace />
+              <ProtectedRoute>
+                <BugListPage />
+              </ProtectedRoute>
             }
           />
-
-          {/* Bug details page */}
           <Route
             path="/bugs/:id"
             element={
-              isAuthenticated ? (
+              <ProtectedRoute>
                 <BugDetailsPage />
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <UserProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Moderator only */}
+          <Route
+            path="/moderation"
+            element={
+              <ModeratorRoute>
+                <ModerationPage />
+              </ModeratorRoute>
             }
           />
         </Routes>
-      </Router>
-    </UserContext.Provider>
+      </AuthProvider>
+    </Router>
   );
 };
 

@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Pencil, Trash2, User as UserIcon } from "lucide-react";
 import VoteControls from "./VoteControls";
-import { UserContext } from "../App";
+import { useAuth } from "../context/AuthContext";
 import type { CommentResponse, VoteType } from "../types";
 import "./CommentCard.css";
 
@@ -18,7 +18,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
   onDelete,
   onVote,
 }) => {
-  const currentUser = useContext(UserContext);
+  const { currentUser } = useAuth();
 
   const canModify =
     currentUser &&
@@ -27,20 +27,11 @@ const CommentCard: React.FC<CommentCardProps> = ({
   const isSelf = currentUser?.id === comment.authorId;
 
   const handleUpvote = () => {
-    if (comment.userVote === "UPVOTE") {
-      // Toggle off — we represent "remove" by passing the same type
-      onVote(comment.id, "UPVOTE");
-    } else {
-      onVote(comment.id, "UPVOTE");
-    }
+    onVote(comment.id, "UPVOTE");
   };
 
   const handleDownvote = () => {
-    if (comment.userVote === "DOWNVOTE") {
-      onVote(comment.id, "DOWNVOTE");
-    } else {
-      onVote(comment.id, "DOWNVOTE");
-    }
+    onVote(comment.id, "DOWNVOTE");
   };
 
   return (

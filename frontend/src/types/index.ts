@@ -25,6 +25,7 @@ export interface UserResponse {
   phoneNumber?: string | null;
   score: number;
   role: UserRole;
+  banned: boolean;
 }
 
 // ─── Vote DTOs ───────────────────────────────────────────────────────
@@ -109,7 +110,4 @@ export interface CreateBugRequest {
   authorId: number;
   tags: string[];
 }
-export interface CurrentUser {
-  id: number;
-  username: string;
-}
+

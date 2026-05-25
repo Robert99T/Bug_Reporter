@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   User as UserIcon,
   Calendar,
@@ -7,7 +7,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import VoteControls from "./VoteControls";
-import { UserContext } from "../App";
+import { useAuth } from "../context/AuthContext";
 import type { BugResponse, VoteType } from "../types";
 import "./BugDetail.css";
 
@@ -52,7 +52,7 @@ const BugDetail: React.FC<BugDetailProps> = ({
   onMarkSolved,
   onVote,
 }) => {
-  const currentUser = useContext(UserContext);
+  const { currentUser } = useAuth();
 
   const canModify =
     currentUser &&

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { createBug, type BugResponse } from "../api/bugApi";
+import { X } from "lucide-react";
+import { createBug } from "../api/bugApi";
+import type { BugResponse } from "../types";
 import "./CreateBugForm.css";
 
 interface CreateBugFormProps {
@@ -17,8 +19,29 @@ const CreateBugForm: React.FC<CreateBugFormProps> = ({
   const [status, setStatus] = useState<"OPEN" | "IN_PROGRESS" | "SOLVED">(
     "OPEN"
   );
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const handleAddTag = () => {
+    const trimmed = tagInput.trim().toLowerCase();
+    if (trimmed && !tags.includes(trimmed)) {
+      setTags((prev) => [...prev, trimmed]);
+    }
+    setTagInput("");
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setTags((prev) => prev.filter((t) => t !== tag));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +55,7 @@ const CreateBugForm: React.FC<CreateBugFormProps> = ({
         pictureUrl: pictureUrl || undefined,
         status,
         authorId,
-        tags: [],
+        tags,
       });
 
       onBugCreated(response.data);
@@ -41,11 +64,11 @@ const CreateBugForm: React.FC<CreateBugFormProps> = ({
       setText("");
       setPictureUrl("");
       setStatus("OPEN");
+      setTags([]);
+      setTagInput("");
     } catch (err: any) {
       console.error("CREATE BUG ERROR:", err);
-      console.error("STATUS:", err?.response?.status);
-      console.error("DATA:", err?.response?.data);
-      setError(err?.response?.data?.message || "Nu s-a putut crea bug-ul.");
+      setError(err?.response?.data?.message || "Failed to create bug.");
     } finally {
       setLoading(false);
     }
@@ -53,11 +76,11 @@ const CreateBugForm: React.FC<CreateBugFormProps> = ({
 
   return (
     <div className="create-bug-card">
-      <h3 className="create-bug-title">Creează un bug nou</h3>
+      <h3 className="create-bug-title">Create a New Bug</h3>
 
       <form className="create-bug-form" onSubmit={handleSubmit}>
         <div className="create-bug-group">
-          <label className="create-bug-label">Titlu</label>
+          <label className="create-bug-label">Title</label>
           <input
             className="create-bug-input"
             type="text"
@@ -68,7 +91,7 @@ const CreateBugForm: React.FC<CreateBugFormProps> = ({
         </div>
 
         <div className="create-bug-group">
-          <label className="create-bug-label">Descriere</label>
+          <label className="create-bug-label">Description</label>
           <textarea
             className="create-bug-textarea"
             value={text}
@@ -78,13 +101,42 @@ const CreateBugForm: React.FC<CreateBugFormProps> = ({
         </div>
 
         <div className="create-bug-group">
-          <label className="create-bug-label">URL imagine</label>
+          <label className="create-bug-label">Image URL</label>
           <input
             className="create-bug-input"
             type="text"
             value={pictureUrl}
             onChange={(e) => setPictureUrl(e.target.value)}
+            placeholder="https://..."
           />
+        </div>
+
+        <div className="create-bug-group">
+          <label className="create-bug-label">Tags</label>
+          <div className="create-bug-tags-wrapper">
+            {tags.map((tag) => (
+              <span key={tag} className="create-bug-tag-chip">
+                #{tag}
+                <button
+                  type="button"
+                  className="create-bug-tag-remove"
+                  onClick={() => removeTag(tag)}
+                  aria-label={`Remove tag ${tag}`}
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+            <input
+              className="create-bug-tag-input"
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              onBlur={handleAddTag}
+              placeholder={tags.length === 0 ? "Type a tag and press Enter..." : ""}
+            />
+          </div>
         </div>
 
         <div className="create-bug-group">
@@ -108,7 +160,7 @@ const CreateBugForm: React.FC<CreateBugFormProps> = ({
 
         <div className="create-bug-actions">
           <button className="create-bug-button" type="submit" disabled={loading}>
-            {loading ? "Se creează..." : "Creează bug"}
+            {loading ? "Creating..." : "Create Bug"}
           </button>
         </div>
       </form>
