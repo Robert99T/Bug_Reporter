@@ -2,7 +2,6 @@ package com.bug.bug_reporter.security;
 
 import com.bug.bug_reporter.model.User;
 import com.bug.bug_reporter.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -30,7 +28,6 @@ import java.util.Optional;
 public class BannedUserFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -56,10 +53,11 @@ public class BannedUserFilter extends OncePerRequestFilter {
                 // Return 403 with ban message
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                objectMapper.writeValue(response.getWriter(), Map.of(
-                        "error", "ACCOUNT_BANNED",
-                        "message", "Your account has been banned. Please contact an administrator."
-                ));
+
+                // Write the raw JSON string directly to bypass Jackson dependency issues
+                String jsonError = "{\"error\": \"ACCOUNT_BANNED\", \"message\": \"Your account has been banned. Please contact an administrator.\"}";
+                response.getWriter().write(jsonError);
+
                 return; // Do NOT continue the filter chain
             }
         }
