@@ -1,6 +1,9 @@
 .bug-filter {
-    background-color: #111827;
-    border: 1px solid #374151;
+    position: sticky;
+    top: 56px;
+    z-index: 99;
+    background-color: #090e1a;
+    border: 1px solid #1e293b;
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 20px;

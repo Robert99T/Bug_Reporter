@@ -4,7 +4,6 @@ import BugCard, { type Bug } from "../components/BugCard";
 import BugFilter from "../components/BugFilter";
 import CreateBugForm from "../components/CreateBugForm";
 import { UserContext } from "../App";
-import type { BugResponse } from "../api/bugApi";
 import "./BugListPage.css";
 
 interface FilterParams {

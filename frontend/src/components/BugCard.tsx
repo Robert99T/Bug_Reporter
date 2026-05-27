@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronUp, ChevronDown } from "lucide-react";
-import { UserContext } from "../App";
+import { UserContext, RefreshUserContext } from "../App";
 import { voteBug } from "../api/voteApi";
 import type { VoteType } from "../types";
 import "./BugCard.css";
@@ -53,6 +53,7 @@ const getStatusClass = (status: string): string => {
 const BugCard: React.FC<BugCardProps> = ({ bug: initialBug, onVoteChange }) => {
   const navigate = useNavigate();
   const currentUser = useContext(UserContext);
+  const refreshUser = useContext(RefreshUserContext);
   const [bug, setBug] = useState(initialBug);
   const [voting, setVoting] = useState(false);
 
@@ -87,6 +88,8 @@ const BugCard: React.FC<BugCardProps> = ({ bug: initialBug, onVoteChange }) => {
       if (onVoteChange) {
         onVoteChange(bug.id, newVoteScore, newUserVote);
       }
+
+      refreshUser();
     } catch (err) {
       console.error("Failed to vote:", err);
     } finally {
