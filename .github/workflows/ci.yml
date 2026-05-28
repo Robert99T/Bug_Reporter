@@ -28,8 +28,8 @@ jobs:
         continue-on-error: true
         run: mvn clean test
 
-  frontend-build:
-    name: Frontend Build
+  frontend:
+    name: Frontend Lint & Build
     runs-on: ubuntu-24.04
 
     defaults:
@@ -49,6 +49,10 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Run lint
+        continue-on-error: true
+        run: npm run lint
 
       - name: Build frontend
         run: npm run build
