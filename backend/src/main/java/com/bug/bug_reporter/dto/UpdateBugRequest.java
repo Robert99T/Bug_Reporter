@@ -1,11 +1,14 @@
 package com.bug.bug_reporter.dto;
 
+import java.util.Set;
+
 public class UpdateBugRequest {
 
     private String title;
     private String text;
     private String pictureUrl;
     private String status;
+    private Set<String> tags;
 
     public String getTitle() {
         return title;
@@ -37,5 +40,13 @@ public class UpdateBugRequest {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 }

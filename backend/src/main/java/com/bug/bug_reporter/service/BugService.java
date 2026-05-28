@@ -124,6 +124,13 @@
                 bug.setStatus(request.getStatus());
             }
 
+            if (request.getTags() != null) {
+                Set<Tag> tags = request.getTags().stream()
+                        .map(name -> getOrCreateTag(name, tagRepository))
+                        .collect(Collectors.toSet());
+                bug.setTags(tags);
+            }
+
             Bug updatedBug = bugRepository.save(bug);
             return mapToBugResponse(updatedBug, null);
         }
