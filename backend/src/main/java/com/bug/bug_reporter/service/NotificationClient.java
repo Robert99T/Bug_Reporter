@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,7 @@ public class NotificationClient {
     @Value("${notification.service.url}")
     private String notificationServiceUrl;
 
+    @Async
     public void sendBanNotification(String email, String phone, String message) {
         NotificationRequest request = new NotificationRequest(email, phone, message);
         try {

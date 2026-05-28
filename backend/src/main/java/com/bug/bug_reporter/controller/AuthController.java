@@ -67,7 +67,7 @@ public class AuthController {
                     .orElse("USER"); // Fallback, though CustomUserDetails guarantees a role
 
             // Score calculation and updated response from Cezar
-            double score = userService.calculateUserScore(id);
+            double score = userService.getUserScore(id).getScore();
             return ResponseEntity.ok(new LoginResponse(id, username, role, score));
 
         } catch (LockedException ex) { // Catch block from Max

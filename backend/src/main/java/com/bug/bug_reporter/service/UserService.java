@@ -58,14 +58,6 @@ public class UserService {
         return UserResponseDTO.fromEntity(user);
     }
 
-    public UserScoreResponse getUserScore(Long userId) {
-        // TODO: Implement logic to calculate and return user's score
-        // 1. Check if user exists. If not, throw UserNotFoundException (handled as 404 Not Found)
-        // 2. Calculate the score
-        // 3. Construct and return UserScoreResponse
-        return new UserScoreResponse(userId, 0.0);
-    }
-
     public UserResponseDTO deleteUser(Long userId) {
         User userToDelete = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found!"));
@@ -118,10 +110,14 @@ public class UserService {
         }
     }
 
-    public double calculateUserScore(Long authorId) {
-        return userRepository.findById(authorId)
+    public UserScoreResponse getUserScore(Long authorId) {
+        Double score = userRepository.findById(authorId)
                 .map(User::getScore)
                 .orElse(0.0);
+        return UserScoreResponse.builder()
+                .userId(authorId)
+                .score(score)
+                .build();
     }
 
 }

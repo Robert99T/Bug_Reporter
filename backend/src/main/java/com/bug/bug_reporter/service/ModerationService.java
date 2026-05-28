@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class ModerationService {
 
     private final UserRepository userRepository;
+    private final NotificationClient notificationClient;
 
     @Transactional
     public void banUser(Long userId) {
@@ -21,9 +22,16 @@ public class ModerationService {
         if (user.isBanned()) {
             throw new IllegalStateException("User is already banned.");
         }
-
         user.setBanned(true);
-        userRepository.save(user);
+
+        notificationClient.sendBanNotification(
+                user.getEmail(),
+                user.getPhoneNumber() != null
+                        ? user.getPhoneNumber()
+                        : "no-phone",
+                "Your account has been banned."
+        );
+
     }
 
     @Transactional
@@ -34,8 +42,6 @@ public class ModerationService {
         if (!user.isBanned()) {
             throw new IllegalStateException("User is not banned.");
         }
-
         user.setBanned(false);
-        userRepository.save(user);
     }
 }
