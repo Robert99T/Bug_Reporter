@@ -1,9 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
-import axios from "axios";
-import BugCard, { type Bug } from "../components/BugCard";
+import React, { useState, useEffect } from "react";
+import BugCard from "../components/BugCard";
 import BugFilter from "../components/BugFilter";
 import CreateBugForm from "../components/CreateBugForm";
-import { UserContext } from "../App";
+import { useAuth } from "../context/AuthContext"; // clean auth hook from Max
+import { getAllBugs } from "../api/bugApi";       // clean API helper from max
+import type { BugResponse } from "../types";
 import "./BugListPage.css";
 
 interface FilterParams {
@@ -14,38 +15,32 @@ interface FilterParams {
 }
 
 const BugListPage: React.FC = () => {
-  const [bugs, setBugs] = useState<Bug[]>([]);
+  const [bugs, setBugs] = useState<BugResponse[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filters, setFilters] = useState<FilterParams>({});
-  const currentUser = useContext(UserContext);
+  
+  // Combined hooks: Cezar's filter state + Max's auth hook
+  const [filters, setFilters] = useState<FilterParams>({}); 
+  const { currentUser } = useAuth(); 
 
   const fetchBugs = (newFilters: FilterParams) => {
     setFilters(newFilters);
     (async () => {
       try {
-        const params = new URLSearchParams();
-        
-        if (currentUser?.id) {
-          params.append("userId", currentUser.id.toString());
-        }
-        if (newFilters.search) {
-          params.append("search", newFilters.search);
-        }
-        if (newFilters.tag) {
-          params.append("tag", newFilters.tag);
-        }
-        if (newFilters.authorId) {
-          params.append("authorId", newFilters.authorId.toString());
-        }
+        // We use newFilters here to avoid React's asynchronous state batching delay
+        let authorId = newFilters.authorId;
         if (newFilters.own && currentUser?.id) {
-          params.append("authorId", currentUser.id.toString());
+          authorId = currentUser.id;
         }
 
-        const url = `http://localhost:8080/bugs${params.toString() ? '?' + params.toString() : ''}`;
-        const res = await axios.get<Bug[]>(url, {
-          withCredentials: true,
+        // clean API helper from Max, utilizing the immediate newFilters values
+        const res = await getAllBugs({
+          userId: currentUser?.id,
+          search: newFilters.search,
+          tag: newFilters.tag,
+          authorId,
         });
+
         setBugs(res.data);
         setError("");
       } catch (err) {
@@ -59,6 +54,7 @@ const BugListPage: React.FC = () => {
     fetchBugs({});
     const timer = setTimeout(() => setInitialLoading(false), 500);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleVoteChange = () => {
@@ -68,7 +64,7 @@ const BugListPage: React.FC = () => {
   return (
     <div className="bug-list-page">
       <BugFilter onApply={fetchBugs} />
-      
+
       <div className="bug-list-container">
         <h2 className="bug-list-title">Bug Reports</h2>
 
@@ -76,7 +72,7 @@ const BugListPage: React.FC = () => {
           <CreateBugForm
             authorId={currentUser.id}
             onBugCreated={(newBug) =>
-              setBugs((prev) => [newBug as unknown as Bug, ...prev])
+              setBugs((prev) => [newBug, ...prev])
             }
           />
         )}

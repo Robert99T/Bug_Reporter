@@ -1,39 +1,13 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronUp, ChevronDown } from "lucide-react";
-import { UserContext, RefreshUserContext } from "../App";
+import { useAuth } from "../context/AuthContext";
 import { voteBug } from "../api/voteApi";
-import type { VoteType } from "../types";
+import type { BugResponse, VoteType } from "../types";
 import "./BugCard.css";
 
-interface Comment {
-  id: number;
-  text: string;
-  pictureUrl?: string | null;
-  creationDate: string;
-  authorId: number;
-  authorUsername: string;
-  bugId: number;
-}
-
-export interface Bug {
-  id: number;
-  title: string;
-  text: string;
-  creationDate: string;
-  pictureUrl?: string | null;
-  status: "OPEN" | "IN_PROGRESS" | "SOLVED";
-  authorId: number;
-  authorUsername: string;
-  authorScore?: number;
-  comments?: Comment[];
-  tags?: string[];
-  voteScore: number;
-  userVote?: "UPVOTE" | "DOWNVOTE" | null;
-}
-
 interface BugCardProps {
-  bug: Bug;
+  bug: BugResponse;
   onVoteChange?: (bugId: number, newVoteScore: number, newUserVote: VoteType | null) => void;
 }
 
@@ -52,8 +26,7 @@ const getStatusClass = (status: string): string => {
 
 const BugCard: React.FC<BugCardProps> = ({ bug: initialBug, onVoteChange }) => {
   const navigate = useNavigate();
-  const currentUser = useContext(UserContext);
-  const refreshUser = useContext(RefreshUserContext);
+const { currentUser, refreshUser } = useAuth(); // Added refreshUser here
   const [bug, setBug] = useState(initialBug);
   const [voting, setVoting] = useState(false);
 
@@ -71,24 +44,25 @@ const BugCard: React.FC<BugCardProps> = ({ bug: initialBug, onVoteChange }) => {
       let newUserVote: VoteType | null;
       let newVoteScore = bug.voteScore;
 
-      if (bug.userVote === null) {
+      if (bug.userVote === null || bug.userVote === undefined) {
+        // No existing vote → cast new
         newUserVote = voteType;
-        await voteBug(bug.id, { userId: currentUser.id, voteType });
         newVoteScore += voteType === "UPVOTE" ? 1 : -1;
       } else if (bug.userVote === voteType) {
-        newUserVote = voteType;
-        await voteBug(bug.id, { userId: currentUser.id, voteType });
-        newVoteScore += voteType === "UPVOTE" ? -1 : 1;
+        // Same vote → toggle off
         newUserVote = null;
+        newVoteScore += voteType === "UPVOTE" ? -1 : 1;
       } else {
+        // Opposite vote → switch
         newUserVote = voteType;
-        await voteBug(bug.id, { userId: currentUser.id, voteType });
         newVoteScore += voteType === "UPVOTE" ? 2 : -2;
       }
 
+      await voteBug(bug.id, { userId: currentUser.id, voteType });
+
       const newBug = { ...bug, voteScore: newVoteScore, userVote: newUserVote };
       setBug(newBug);
-      
+
       if (onVoteChange) {
         onVoteChange(bug.id, newVoteScore, newUserVote);
       }

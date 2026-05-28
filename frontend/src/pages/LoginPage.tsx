@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import type { CurrentUser } from "../types";
+import { useAuth } from "../context/AuthContext";
+import { registerUser } from "../api/authApi";
 import "../Login.css";
 
-interface LoginPageProps {
-  onLogin: (user: CurrentUser) => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+const LoginPage: React.FC = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,6 +14,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const resetMessages = () => {
@@ -31,18 +28,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const res = await axios.post<CurrentUser>(
-        "http://localhost:8080/auth/login",
-        { username, password },
-        { withCredentials: true }
-      );
-
-      onLogin(res.data);
-      localStorage.setItem("currentUser", JSON.stringify(res.data));
+      await login(username, password);
       navigate("/");
-    } catch (err) {
-      console.error(err);
-      setError("Username sau parolă invalidă.");
+    } catch (err: any) {
+      const status = err?.response?.status;
+      const data = err?.response?.data;
+
+      if (status === 403 && data?.error === "ACCOUNT_BANNED") {
+        setError(data.message || "Your account has been banned. Please contact an administrator.");
+      } else {
+        setError("Invalid username or password.");
+      }
     } finally {
       setLoading(false);
     }
@@ -54,25 +50,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      await axios.post(
-        "http://localhost:8080/users/register",
-        {
-          username,
-          email,
-          password,
-          phoneNumber: phoneNumber || undefined,
-        },
-        { withCredentials: true }
-      );
+      await registerUser({
+        username,
+        email,
+        password,
+        phoneNumber: phoneNumber || undefined,
+      });
 
-      setSuccess("Cont creat cu succes. Te poți loga acum.");
+      setSuccess("Account created successfully. You can now log in.");
       setMode("login");
     } catch (err: any) {
-      console.error(err);
       setError(
         err?.response?.data?.message ||
           err?.response?.data?.error ||
-          "Nu s-a putut crea contul."
+          "Failed to create account."
       );
     } finally {
       setLoading(false);
@@ -83,7 +74,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     <div className="login-page">
       <div className="login-card">
         <h2 className="login-heading">
-          {mode === "login" ? "Login" : "Creează cont"}
+          {mode === "login" ? "Login" : "Create Account"}
         </h2>
 
         <div className="login-toggle">
@@ -150,7 +141,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           )}
 
           <div className="login-group">
-            <label className="login-label">Parolă</label>
+            <label className="login-label">Password</label>
             <input
               className="login-input"
               type="password"
@@ -167,8 +158,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           <button className="login-submit" type="submit" disabled={loading}>
             {loading
               ? mode === "login"
-                ? "Se face login..."
-                : "Se creează contul..."
+                ? "Logging in..."
+                : "Creating account..."
               : mode === "login"
               ? "Login"
               : "Create account"}

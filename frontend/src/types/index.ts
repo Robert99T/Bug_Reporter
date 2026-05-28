@@ -26,6 +26,7 @@ export interface UserResponse {
   phoneNumber?: string | null;
   score: number;
   role: UserRole;
+  banned: boolean;
 }
 
 // ─── Vote DTOs ───────────────────────────────────────────────────────

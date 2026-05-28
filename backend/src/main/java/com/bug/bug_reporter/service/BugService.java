@@ -11,7 +11,9 @@
     import com.bug.bug_reporter.repository.BugRepository;
     import com.bug.bug_reporter.repository.TagRepository;
     import com.bug.bug_reporter.repository.UserRepository;
+    import com.bug.bug_reporter.utility.SecurityUtils;
     import lombok.RequiredArgsConstructor;
+    import org.springframework.security.access.AccessDeniedException;
     import org.springframework.stereotype.Service;
 
 
@@ -102,6 +104,10 @@
             Bug bug = bugRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Bug not found with id: " + id));
 
+            if (!SecurityUtils.hasPermissionOrIsModerator(bug.getAuthor().getId())) {
+                throw new AccessDeniedException("Only the author or a moderator can edit this bug.");
+            }
+
             if (request.getTitle() != null && !request.getTitle().isBlank()) {
                 bug.setTitle(request.getTitle());
             }
@@ -125,6 +131,10 @@
         public void deleteBug(Long id) {
             Bug bug = bugRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Bug not found with id: " + id));
+
+            if (!SecurityUtils.hasPermissionOrIsModerator(bug.getAuthor().getId())) {
+                throw new AccessDeniedException("Only the author or a moderator can delete this bug.");
+            }
 
             bugRepository.delete(bug);
         }

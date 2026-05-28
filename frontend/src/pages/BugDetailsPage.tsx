@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback, useContext } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import BugDetail from "../components/BugDetail";
 import CommentCard from "../components/CommentCard";
 import CommentForm from "../components/CommentForm";
 import EditBugModal from "../components/EditBugModal";
-import { UserContext, RefreshUserContext } from "../App";
+import { useAuth } from "../context/AuthContext";
 import { getBugById, updateBug, deleteBug } from "../api/bugApi";
 import {
   getCommentsByBugId,
@@ -25,8 +25,7 @@ import "./BugDetailsPage.css";
 const BugDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const currentUser = useContext(UserContext);
-  const refreshUser = useContext(RefreshUserContext);
+const { currentUser, refreshUser } = useAuth(); // Added refreshUser here
 
   const [bug, setBug] = useState<BugResponse | null>(null);
   const [comments, setComments] = useState<CommentResponse[]>([]);

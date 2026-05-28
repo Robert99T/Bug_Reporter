@@ -7,5 +7,6 @@ export const voteBug = (bugId: number, data: VoteRequest) =>
 export const voteComment = (commentId: number, data: VoteRequest) =>
   apiClient.post<VoteResponse>(`/comments/${commentId}/votes`, data);
 
-export const removeVote = (voteId: number) =>
-  apiClient.delete(`/votes/${voteId}`);
+// Note: removeVote has been intentionally removed.
+// The backend handles vote toggling via the POST endpoints above —
+// calling POST with the same vote type again removes the vote (204 No Content).

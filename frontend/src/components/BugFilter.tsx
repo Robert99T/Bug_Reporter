@@ -1,15 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Tag as TagIcon, User, UserCircle, X } from "lucide-react";
+import { getAllTags, getAllUsersForFilter } from "../api/filterApi";
+import type { UserResponse } from "../types";
 import "./BugFilter.css";
-
-export interface UserOption {
-  id: number;
-  username: string;
-}
-
-export interface TagOption {
-  name: string;
-}
 
 interface BugFilterProps {
   onApply: (filters: {
@@ -25,9 +18,9 @@ const BugFilter: React.FC<BugFilterProps> = ({ onApply }) => {
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedAuthorName, setSelectedAuthorName] = useState("");
   const [showOwn, setShowOwn] = useState(false);
-  const [tags, setTags] = useState<TagOption[]>([]);
-  const [users, setUsers] = useState<UserOption[]>([]);
-  
+  const [tags, setTags] = useState<string[]>([]);
+  const [users, setUsers] = useState<UserResponse[]>([]);
+
   const onApplyRef = useRef(onApply);
   onApplyRef.current = onApply;
 
@@ -35,11 +28,11 @@ const BugFilter: React.FC<BugFilterProps> = ({ onApply }) => {
     const fetchOptions = async () => {
       try {
         const [tagsRes, usersRes] = await Promise.all([
-          fetch("http://localhost:8080/api/tags").then((r) => r.json()),
-          fetch("http://localhost:8080/api/users").then((r) => r.json()),
+          getAllTags(),
+          getAllUsersForFilter(),
         ]);
-        setTags(tagsRes);
-        setUsers(usersRes);
+        setTags(tagsRes.data);
+        setUsers(usersRes.data);
       } catch (err) {
         console.error("Failed to fetch filter options:", err);
       }
@@ -51,7 +44,9 @@ const BugFilter: React.FC<BugFilterProps> = ({ onApply }) => {
     const timeoutId = setTimeout(() => {
       let authorId: number | undefined;
       if (selectedAuthorName) {
-        const user = users.find((u) => u.username.toLowerCase() === selectedAuthorName.toLowerCase());
+        const user = users.find(
+          (u) => u.username.toLowerCase() === selectedAuthorName.toLowerCase()
+        );
         if (user) {
           authorId = user.id;
         }
@@ -66,7 +61,7 @@ const BugFilter: React.FC<BugFilterProps> = ({ onApply }) => {
     }, 400);
 
     return () => clearTimeout(timeoutId);
-  }, [search, selectedTag, selectedAuthorName, showOwn]);
+  }, [search, selectedTag, selectedAuthorName, showOwn, users]);
 
   const handleClear = () => {
     setSearch("");
@@ -74,12 +69,6 @@ const BugFilter: React.FC<BugFilterProps> = ({ onApply }) => {
     setSelectedAuthorName("");
     setShowOwn(false);
     onApply({});
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      clearTimeout;
-    }
   };
 
   const hasFilters = search || selectedTag || selectedAuthorName || showOwn;
@@ -94,7 +83,6 @@ const BugFilter: React.FC<BugFilterProps> = ({ onApply }) => {
             placeholder="Search by title..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={handleKeyDown}
             className="filter-input"
           />
         </div>
@@ -111,7 +99,7 @@ const BugFilter: React.FC<BugFilterProps> = ({ onApply }) => {
           />
           <datalist id="tags-list">
             {tags.map((tag) => (
-              <option key={tag.name} value={tag.name} />
+              <option key={tag} value={tag} />
             ))}
           </datalist>
         </div>

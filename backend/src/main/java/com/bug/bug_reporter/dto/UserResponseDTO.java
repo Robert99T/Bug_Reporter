@@ -9,7 +9,8 @@ public record UserResponseDTO(
     String email,
     String phoneNumber,
     double score,
-    UserRole role
+    UserRole role,
+    boolean banned
 ) {
     public static UserResponseDTO fromEntity(User user) {
         return new UserResponseDTO(
@@ -18,7 +19,8 @@ public record UserResponseDTO(
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getScore(),
-                user.getUserRole()
+                user.getUserRole(),
+                user.isBanned()
         );
     }
 }

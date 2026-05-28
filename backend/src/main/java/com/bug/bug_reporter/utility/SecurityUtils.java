@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityUtils {
 
-    private static Long getCurrentUserId() {
+    public static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -25,4 +25,16 @@ public class SecurityUtils {
     public static boolean hasPermission(Long id) {
         return getCurrentUserId().equals(id);
     }
+
+    public static boolean isModerator() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) return false;
+        return authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_MODERATOR"));
+    }
+
+    public static boolean hasPermissionOrIsModerator(Long ownerId) {
+        return hasPermission(ownerId) || isModerator();
+    }
 }
+
