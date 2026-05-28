@@ -2,7 +2,7 @@ name: Backend CI
 
 on:
   push:
-    branches: [ main, robert_log_in_page ]
+    branches: [ main, robert_github_actions ]
   pull_request:
     branches: [ main ]
 
@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: Java
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build project
-        run: mvn clean install
+      - name: Build backend
+        run: cd backend && mvn clean install
