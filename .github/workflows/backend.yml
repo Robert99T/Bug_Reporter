@@ -20,5 +20,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build backend (skip tests)
-        run: cd backend && mvn clean install -DskipTests
+      - name: Run Maven tests
+        continue-on-error: true
+        run: cd backend && mvn clean test
