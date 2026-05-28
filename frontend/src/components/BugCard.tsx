@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { UserContext, RefreshUserContext } from "../App";
@@ -56,6 +56,10 @@ const BugCard: React.FC<BugCardProps> = ({ bug: initialBug, onVoteChange }) => {
   const refreshUser = useContext(RefreshUserContext);
   const [bug, setBug] = useState(initialBug);
   const [voting, setVoting] = useState(false);
+
+  useEffect(() => {
+    setBug(initialBug);
+  }, [initialBug]);
 
   const isSelf = currentUser?.id === bug.authorId;
 
@@ -132,6 +136,9 @@ const BugCard: React.FC<BugCardProps> = ({ bug: initialBug, onVoteChange }) => {
           <div className="bug-header">
             <div className="bug-user">
               By <strong>{bug.authorUsername || "Unknown"}</strong>
+              <span className="bug-card-author-score" title="User score">
+                ★ {(bug.authorScore ?? 0).toFixed(1)}
+              </span>
             </div>
 
             <div className="bug-meta">

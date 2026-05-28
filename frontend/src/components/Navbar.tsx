@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
                 {currentUser && (
                     <span className="navbar-user">
             {currentUser.username}
-                        <span className="navbar-score"> ★ {currentUser.score.toFixed(1)}</span>
+                        <span className="navbar-score"> ★ {(currentUser.score ?? 0).toFixed(1)}</span>
           </span>
                 )}
             </div>

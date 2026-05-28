@@ -51,6 +51,7 @@ public class Bug {
             joinColumns = @JoinColumn(name = "bug_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    @Builder.Default
     private Set<Tag> tags = new HashSet<>();
 
     @OneToMany(mappedBy = "bug", cascade = CascadeType.ALL, orphanRemoval = true)
