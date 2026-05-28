@@ -163,7 +163,7 @@
             if (bug.getAuthor() != null) {
                 response.setAuthorId(bug.getAuthor().getId());
                 response.setAuthorUsername(bug.getAuthor().getUsername());
-                response.setAuthorScore(userService.calculateUserScore(bug.getAuthor().getId()));
+                response.setAuthorScore(userService.getUserScore(bug.getAuthor().getId()).getScore());
             }
 
             Integer voteScore = bugVoteRepository.getVoteScoreByBugId(bug.getId());

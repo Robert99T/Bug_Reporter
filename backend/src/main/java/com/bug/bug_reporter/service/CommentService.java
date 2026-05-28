@@ -114,7 +114,7 @@ public class CommentService {
         if (comment.getAuthor() != null) {
             response.setAuthorId(comment.getAuthor().getId());
             response.setAuthorUsername(comment.getAuthor().getUsername());
-            response.setAuthorScore(userService.calculateUserScore(comment.getAuthor().getId()));
+            response.setAuthorScore(userService.getUserScore(comment.getAuthor().getId()).getScore());
         }
 
         if (comment.getBug() != null) {
