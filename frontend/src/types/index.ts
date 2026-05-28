@@ -14,6 +14,7 @@ export interface CurrentUser {
   id: number;
   username: string;
   role: UserRole;
+  score: number;
 }
 
 // ─── User DTO ────────────────────────────────────────────────────────
@@ -109,7 +110,4 @@ export interface CreateBugRequest {
   authorId: number;
   tags: string[];
 }
-export interface CurrentUser {
-  id: number;
-  username: string;
-}
+
