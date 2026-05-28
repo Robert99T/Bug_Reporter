@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { CurrentUser } from "../types";
 import { loginUser as apiLogin } from "../api/authApi";
 import { getUserScore } from "../api/userApi";
+import apiClient from "../api/client"; // <-- Added this to make the teammate's fetch work
 
 // ─── Context Shape ───────────────────────────────────────────────────
 interface AuthContextValue {
@@ -10,6 +11,7 @@ interface AuthContextValue {
   isModerator: boolean;
   login: (username: string, password: string) => Promise<CurrentUser>;
   logout: () => void;
+  refreshUser: () => Promise<void>; // <-- 1. Added to the interface
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -29,8 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const user: CurrentUser = JSON.parse(saved);
       setCurrentUser(user);
 
-      // Lightweight session validation — if it fails the interceptor
-      // in client.ts will clear localStorage and redirect to /login
+      // Lightweight session validation
       getUserScore(user.id).catch(() => {
         // Session is stale → clear
         localStorage.removeItem("currentUser");
@@ -55,12 +56,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     window.location.href = "/login";
   }, []);
 
+  // 2. Teammate's refresh function integrated cleanly here
+  const refreshUser = useCallback(async () => {
+    if (!currentUser) return;
+    try {
+      const res = await apiClient.get<CurrentUser>(`/users/${currentUser.id}`);
+      setCurrentUser(res.data);
+      localStorage.setItem("currentUser", JSON.stringify(res.data));
+    } catch (err) {
+      console.error("Failed to refresh user:", err);
+    }
+  }, [currentUser]);
+
   const value: AuthContextValue = {
     currentUser,
     isAuthenticated: currentUser !== null,
     isModerator: currentUser?.role === "MODERATOR",
     login,
     logout,
+    refreshUser, // 3. Exposing it so useAuth() can give it to BugCard
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
