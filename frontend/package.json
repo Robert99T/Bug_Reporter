@@ -40,5 +40,9 @@
 
   "scripts": {
     "lint": "eslint src --ext .ts,.tsx"
+  },
+
+  "scripts": {
+    "build": "vite build"
   }
 }
