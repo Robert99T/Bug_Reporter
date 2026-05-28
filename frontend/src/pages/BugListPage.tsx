@@ -17,9 +17,11 @@ const BugListPage: React.FC = () => {
   const [bugs, setBugs] = useState<Bug[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filters, setFilters] = useState<FilterParams>({});
   const currentUser = useContext(UserContext);
 
-  const fetchBugs = (filters: FilterParams) => {
+  const fetchBugs = (newFilters: FilterParams) => {
+    setFilters(newFilters);
     (async () => {
       try {
         const params = new URLSearchParams();
@@ -27,16 +29,16 @@ const BugListPage: React.FC = () => {
         if (currentUser?.id) {
           params.append("userId", currentUser.id.toString());
         }
-        if (filters.search) {
-          params.append("search", filters.search);
+        if (newFilters.search) {
+          params.append("search", newFilters.search);
         }
-        if (filters.tag) {
-          params.append("tag", filters.tag);
+        if (newFilters.tag) {
+          params.append("tag", newFilters.tag);
         }
-        if (filters.authorId) {
-          params.append("authorId", filters.authorId.toString());
+        if (newFilters.authorId) {
+          params.append("authorId", newFilters.authorId.toString());
         }
-        if (filters.own && currentUser?.id) {
+        if (newFilters.own && currentUser?.id) {
           params.append("authorId", currentUser.id.toString());
         }
 
@@ -58,6 +60,10 @@ const BugListPage: React.FC = () => {
     const timer = setTimeout(() => setInitialLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleVoteChange = () => {
+    fetchBugs(filters);
+  };
 
   return (
     <div className="bug-list-page">
@@ -82,7 +88,7 @@ const BugListPage: React.FC = () => {
         ) : bugs.length === 0 ? (
           <p style={{ textAlign: "center" }}>No bugs found.</p>
         ) : (
-          bugs.map((bug) => <BugCard key={bug.id} bug={bug} />)
+          bugs.map((bug) => <BugCard key={bug.id} bug={bug} onVoteChange={handleVoteChange} />)
         )}
       </div>
     </div>

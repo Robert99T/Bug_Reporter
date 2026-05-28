@@ -7,6 +7,7 @@ import com.bug.bug_reporter.model.Bug;
 import com.bug.bug_reporter.model.User;
 import com.bug.bug_reporter.model.UserRole;
 import com.bug.bug_reporter.repository.BugRepository;
+import com.bug.bug_reporter.repository.TagRepository;
 import com.bug.bug_reporter.repository.UserRepository;
 import com.bug.bug_reporter.repository.BugVoteRepository;
 import com.bug.bug_reporter.repository.CommentVoteRepository;
@@ -20,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,6 +41,12 @@ class BugServiceTest {
 
     @Mock
     private CommentVoteRepository commentVoteRepository;
+
+    @Mock
+    private TagRepository tagRepository;
+
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private BugService bugService;
@@ -77,6 +85,7 @@ class BugServiceTest {
         request.setStatus("OPEN");
         request.setPictureUrl("http://images.example.com/bug1.png");
         request.setAuthorId(1L);
+        request.setTags(Set.of());
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testAuthor));
         when(bugRepository.save(any(Bug.class))).thenReturn(testBug);
@@ -123,7 +132,7 @@ class BugServiceTest {
 
         when(bugRepository.findAll()).thenReturn(List.of(testBug, secondBug));
 
-        List<BugResponse> result = bugService.getAllBugs();
+        List<BugResponse> result = bugService.getAllBugs(null, null, null, null);
 
         assertEquals(2, result.size());
         assertEquals("Login button broken", result.get(0).getTitle());
@@ -134,7 +143,7 @@ class BugServiceTest {
     void getAllBugs_emptyList_shouldReturnEmptyList() {
         when(bugRepository.findAll()).thenReturn(List.of());
 
-        List<BugResponse> result = bugService.getAllBugs();
+        List<BugResponse> result = bugService.getAllBugs(null, null, null, null);
 
         assertTrue(result.isEmpty());
     }

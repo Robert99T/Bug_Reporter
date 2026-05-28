@@ -3,6 +3,7 @@ package com.bug.bug_reporter.controller;
 import com.bug.bug_reporter.dto.LoginRequest;
 import com.bug.bug_reporter.dto.LoginResponse;
 import com.bug.bug_reporter.security.CustomUserDetails;
+import com.bug.bug_reporter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
@@ -56,6 +58,7 @@ public class AuthController {
                 .findFirst()
                 .orElse("USER"); // Fallback, though CustomUserDetails guarantees a role
 
-        return ResponseEntity.ok(new LoginResponse(id, username, role));
+        double score = userService.calculateUserScore(id);
+        return ResponseEntity.ok(new LoginResponse(id, username, role, score));
     }
 }
