@@ -3,6 +3,7 @@ package com.bug.bug_reporter.controller;
 import com.bug.bug_reporter.dto.LoginRequest;
 import com.bug.bug_reporter.dto.LoginResponse;
 import com.bug.bug_reporter.security.CustomUserDetails;
+import com.bug.bug_reporter.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+// This file had conflict when trying to merge into main
+// because Max and Cezar worked on searatte branches at the same time
+// I kept the functionality from both because they were'nt contracdicting each other logically
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final UserService userService; // From Cezar
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
+    public ResponseEntity<?> login( // ResponseEntity<?> from Max to allow returning Map or LoginResponse
             @Valid @RequestBody LoginRequest loginRequest,
             HttpServletRequest request
     ) {
-        try {
+        try { // try-catch block from Max
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
 
@@ -61,13 +66,15 @@ public class AuthController {
                     .findFirst()
                     .orElse("USER"); // Fallback, though CustomUserDetails guarantees a role
 
-            return ResponseEntity.ok(new LoginResponse(id, username, role));
+            // Score calculation and updated response from Cezar
+            double score = userService.calculateUserScore(id);
+            return ResponseEntity.ok(new LoginResponse(id, username, role, score));
 
-        } catch (LockedException ex) {
+        } catch (LockedException ex) { // Catch block from Max
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                     "error", "ACCOUNT_BANNED",
                     "message", "Your account has been banned. Please contact an administrator."
             ));
         }
     }
-}
+}

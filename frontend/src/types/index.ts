@@ -14,6 +14,7 @@ export interface CurrentUser {
   id: number;
   username: string;
   role: UserRole;
+  score: number;
 }
 
 // ─── User DTO ────────────────────────────────────────────────────────

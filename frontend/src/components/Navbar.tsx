@@ -44,7 +44,11 @@ const Navbar: React.FC = () => {
         <div className="navbar-right">
           <span className="navbar-user">
             {currentUser.username}
-            {isModerator && <span className="navbar-badge">MOD</span>}
+            {/* Teammate's score feature injected here */}
+            <span className="navbar-badge" style={{ marginLeft: '8px' }}>
+              ★ {(currentUser.score ?? 0).toFixed(1)}
+            </span>
+            {isModerator && <span className="navbar-score">MOD</span>}
           </span>
           <button className="navbar-logout" onClick={logout} title="Logout">
             <LogOut size={16} />

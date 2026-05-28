@@ -61,4 +61,12 @@ public class User {
         bugs.remove(bug);
         bug.setAuthor(null);
     }
+
+    public void decreaseScore(double amount) {
+        score -= amount;
+    }
+
+    public void increaseScore(double amount) {
+        score += amount;
+    }
 }

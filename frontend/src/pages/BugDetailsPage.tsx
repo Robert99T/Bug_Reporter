@@ -25,7 +25,7 @@ import "./BugDetailsPage.css";
 const BugDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+const { currentUser, refreshUser } = useAuth(); // Added refreshUser here
 
   const [bug, setBug] = useState<BugResponse | null>(null);
   const [comments, setComments] = useState<CommentResponse[]>([]);
@@ -113,7 +113,8 @@ const BugDetailsPage: React.FC = () => {
     if (!currentUser) return;
     try {
       await voteBug(bugId, { userId: currentUser.id, voteType });
-      await fetchBug(); // Refresh to get updated score + userVote
+      await fetchBug();
+      refreshUser();
     } catch (err) {
       console.error("Failed to vote on bug:", err);
     }
@@ -129,7 +130,8 @@ const BugDetailsPage: React.FC = () => {
         pictureUrl,
       });
       await fetchComments();
-      await fetchBug(); // Refresh bug in case status changed to IN_PROGRESS
+      await fetchBug();
+      refreshUser();
     } catch (err) {
       console.error("Failed to create comment:", err);
     }
@@ -162,6 +164,7 @@ const BugDetailsPage: React.FC = () => {
     try {
       await voteComment(commentId, { userId: currentUser.id, voteType });
       await fetchComments();
+      refreshUser();
     } catch (err) {
       console.error("Failed to vote on comment:", err);
     }

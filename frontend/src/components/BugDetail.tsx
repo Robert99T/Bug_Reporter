@@ -111,7 +111,7 @@ const BugDetail: React.FC<BugDetailProps> = ({
               <UserIcon size={15} className="bug-detail-author-icon" />
               <span className="bug-detail-author-name">{bug.authorUsername}</span>
               <span className="bug-detail-author-score" title="User score">
-                ★ {bug.authorScore.toFixed(1)}
+                ★ {(bug.authorScore ?? 0).toFixed(1)}
               </span>
             </div>
             <div className="bug-detail-date">

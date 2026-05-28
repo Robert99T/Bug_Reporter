@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import BugCard from "../components/BugCard";
 import BugFilter from "../components/BugFilter";
 import CreateBugForm from "../components/CreateBugForm";
-import { useAuth } from "../context/AuthContext";
-import { getAllBugs } from "../api/bugApi";
+import { useAuth } from "../context/AuthContext"; // clean auth hook from Max
+import { getAllBugs } from "../api/bugApi";       // clean API helper from max
 import type { BugResponse } from "../types";
 import "./BugListPage.css";
 
@@ -18,20 +18,26 @@ const BugListPage: React.FC = () => {
   const [bugs, setBugs] = useState<BugResponse[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
-  const { currentUser } = useAuth();
+  
+  // Combined hooks: Cezar's filter state + Max's auth hook
+  const [filters, setFilters] = useState<FilterParams>({}); 
+  const { currentUser } = useAuth(); 
 
-  const fetchBugs = (filters: FilterParams) => {
+  const fetchBugs = (newFilters: FilterParams) => {
+    setFilters(newFilters);
     (async () => {
       try {
-        let authorId = filters.authorId;
-        if (filters.own && currentUser?.id) {
+        // We use newFilters here to avoid React's asynchronous state batching delay
+        let authorId = newFilters.authorId;
+        if (newFilters.own && currentUser?.id) {
           authorId = currentUser.id;
         }
 
+        // clean API helper from Max, utilizing the immediate newFilters values
         const res = await getAllBugs({
           userId: currentUser?.id,
-          search: filters.search,
-          tag: filters.tag,
+          search: newFilters.search,
+          tag: newFilters.tag,
           authorId,
         });
 
@@ -50,6 +56,10 @@ const BugListPage: React.FC = () => {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleVoteChange = () => {
+    fetchBugs(filters);
+  };
 
   return (
     <div className="bug-list-page">
@@ -74,7 +84,7 @@ const BugListPage: React.FC = () => {
         ) : bugs.length === 0 ? (
           <p style={{ textAlign: "center" }}>No bugs found.</p>
         ) : (
-          bugs.map((bug) => <BugCard key={bug.id} bug={bug} />)
+          bugs.map((bug) => <BugCard key={bug.id} bug={bug} onVoteChange={handleVoteChange} />)
         )}
       </div>
     </div>

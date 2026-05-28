@@ -53,7 +53,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
             <UserIcon size={14} className="comment-author-icon" />
             <span className="comment-author-name">{comment.authorUsername}</span>
             <span className="comment-author-score" title="User score">
-              ★ {comment.authorScore.toFixed(1)}
+              ★ {(comment.authorScore ?? 0).toFixed(1)}
             </span>
           </div>
 

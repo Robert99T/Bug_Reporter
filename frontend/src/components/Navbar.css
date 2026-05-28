@@ -95,6 +95,14 @@
   text-transform: uppercase;
 }
 
+/* Cezar's score styling */
+.navbar-score {
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-left: 4px;
+}
+
 .navbar-logout {
   display: flex;
   align-items: center;
